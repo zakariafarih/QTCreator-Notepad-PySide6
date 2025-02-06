@@ -74,6 +74,9 @@ class MainWindow(QMainWindow):
         self.current_file = None
         self.zoom_factor = 1.0
         self.last_background_color = QColor('white')
+        palette = self.textEdit.palette()
+        palette.setColor(QPalette.Text, QColor("black"))
+        self.textEdit.setPalette(palette)
         self.setup_connections()
 
     def load_ui(self):
@@ -91,6 +94,8 @@ class MainWindow(QMainWindow):
 
         # Store reference to text edit widget
         self.textEdit = self.ui.textEdit
+
+        self.textEdit.setTextColor(QColor("black"))
 
     def setup_connections(self):
         # File menu
@@ -236,10 +241,15 @@ class MainWindow(QMainWindow):
         )
 
     def choose_font(self):
-        current = self.textEdit.currentFont()
-        font, ok = QFontDialog.getFont(current, self)
-        if ok:
-            self.textEdit.setCurrentFont(font)
+        current_font = self.textEdit.currentFont()
+        font_dialog = QFontDialog(self)
+        font_dialog.setCurrentFont(current_font)
+
+        if font_dialog.exec_() == QDialog.Accepted:
+            selected_font = font_dialog.selectedFont()
+            if isinstance(selected_font, QFont):
+                 self.textEdit.setCurrentFont(selected_font)
+
 
     def choose_text_color(self):
         color = QColorDialog.getColor(self.textEdit.textColor(), self)
